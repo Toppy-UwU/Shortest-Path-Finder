@@ -44,7 +44,7 @@ class mainFrame extends JFrame{
 		answerPanel anP = new answerPanel(mainP);		
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(1200,900);
+		setSize(1690,1000);
 		setLocationRelativeTo(null);
 		setTitle("algorithm");
 		setLayout(new BorderLayout());
@@ -53,7 +53,7 @@ class mainFrame extends JFrame{
 		
 		add(mainP, BorderLayout.CENTER);
 		add(cmdP, BorderLayout.EAST);
-		add(anP, BorderLayout.SOUTH);
+		add(anP, BorderLayout.WEST);
 	}
 	
 	
@@ -68,7 +68,9 @@ class cmdPanel extends JPanel{
 	private boolean endNodeStat = false;
 	
 	JButton startBtn = new JButton("Select Start Node");
-	JButton endBtn = new JButton("Select Start Node");
+	JButton endBtn = new JButton("Select End Node");
+	JButton addBtn = new JButton("Add Node");
+	JButton edgeBtn = new JButton("Add Edge");
 	
 	
 	public cmdPanel() {
@@ -77,9 +79,6 @@ class cmdPanel extends JPanel{
 		 
 		setBackground(Color.white);
 		setLayout(new GridLayout(10,1));
-		
-		JButton addBtn = new JButton("Add Node");
-		JButton edgeBtn = new JButton("Add Edge");
 		
 		addBtn.setBackground(Color.white);
 		edgeBtn.setBackground(Color.white);
@@ -178,6 +177,8 @@ class cmdPanel extends JPanel{
 			}
 		});
 		
+		
+		
 	}
 	 
 	 
@@ -193,6 +194,8 @@ class cmdPanel extends JPanel{
 	
 	void resetEdgeStat() {
 		this.addFEdgeStat = false;
+		this.edgeBtn.setBackground(Color.white);
+		
 	}
 	
 	boolean getStartNodeStat() {
@@ -206,6 +209,19 @@ class cmdPanel extends JPanel{
 	void resetStartEndStat() {
 		startNodeStat = false;
 		endNodeStat = false;
+	}
+	
+	public void setZeroCmdPanel() {
+		this.addStat = false;
+		this.addFEdgeStat = false;
+		this.startNodeStat = false;
+		this.endNodeStat = false;
+		this.startBtn.setText("Select Start Node");
+		this.endBtn.setText("Select End Node");
+		addBtn.setBackground(Color.white);
+		edgeBtn.setBackground(Color.white);
+		startBtn.setBackground(Color.white);
+		endBtn.setBackground(Color.white);
 	}
 	 
 }
@@ -226,10 +242,12 @@ class mainPanel extends JPanel{
 	private int Eidx = 0;
 	public int start,end;
 	
-	private int selectedNode[] = new int[2];
+	private int selectedNode[] = new int[] {-99,-99};
 	private boolean selectedStat[] = new boolean[]{false, false};
 	public int startEndSelect[] = new int[2];
 	private boolean frChk[] = new boolean[] {false, false};
+	
+	private JButton resetBtn = new JButton("Reset");
 	
 	public mainPanel(cmdPanel cmdP) {
 		
@@ -240,6 +258,10 @@ class mainPanel extends JPanel{
 		
 		add(NP, BorderLayout.CENTER);
 		
+		resetBtn.setBackground(Color.white);
+		resetBtn.setForeground(Color.red);
+		
+		add(resetBtn, BorderLayout.SOUTH);
 		
 		addMouseListener(new MouseListener() {
 			
@@ -265,6 +287,16 @@ class mainPanel extends JPanel{
 					System.out.println("not");
 				}
 				
+			}
+		});
+		
+		resetBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cmdP.setZeroCmdPanel();
+				setZeroMainPanel();
+				NP.setZeroNodePanel();
 			}
 		});
 		
@@ -297,10 +329,12 @@ class mainPanel extends JPanel{
 			int idx = (int)(e.getActionCommand().charAt(0))-65;
 			System.out.println(xPosit.get(idx)+"/"+yPosit.get(idx));
 			selectedNode[chk] = idx;
-			selectedStat[chk] = true;
-			chk++;
-			System.out.println("Chk:"+chk);
-			System.out.println(Arrays.toString(selectedStat));
+			if(selectedNode[0] != selectedNode[1]) {
+				selectedStat[chk] = true;
+				chk++;
+				System.out.println("Chk:"+chk);
+				System.out.println(Arrays.toString(selectedStat));
+			}
 			if(selectedStat[0] && selectedStat[1]) {
 				this.NP.addFEdge(xPosit.get(selectedNode[0]), yPosit.get(selectedNode[0]), xPosit.get(selectedNode[1]), yPosit.get(selectedNode[1]));
 				chk=0;
@@ -329,7 +363,8 @@ class mainPanel extends JPanel{
 				int lblY = (yPosit.get(selectedNode[0])+yPosit.get(selectedNode[1]))/2;
 				lbl.setBounds(lblX,lblY,35,20);
 				this.NP.add(lbl);
-				
+				selectedNode[0] = -99;
+				selectedNode[1] = -99;
 				
 			}
 			
@@ -386,7 +421,34 @@ class mainPanel extends JPanel{
 		}
 	};
 	
+	public void setChk() {
+		this.chk = 0;
+		this.selectedStat[0] = false;
+		this.selectedStat[1] = false;
+		this.cmdP.resetEdgeStat();
+	}
 	
+	public void setZeroMainPanel() {
+		this.Node.clear();
+		this.xPosit.clear();
+		this.yPosit.clear();
+		this.Dis.clear();
+		this.distanc.clear();
+		this.rNode.clear();
+		this.rEdge.clear();
+		this.name = 65;
+		this.chk = 0;
+		this.Eidx = 0;
+		
+		this.selectedStat[0] = false;
+		this.selectedStat[1] = false;
+		this.frChk[0] = false;
+		this.frChk[1] = false;
+		this.NP.removeAll();
+		this.NP.repaint();
+		this.NP.revalidate();
+		
+	}
 	
 	
 }
@@ -449,6 +511,14 @@ class nodePanel extends JPanel {
 		
 	}
 	
+	public void setZeroNodePanel() {
+		this.EP.clear();
+		this.line.clear();
+		this.selectedLine.clear();
+		this.n = 0;
+		this.fr = false;
+	}
+	
 }
 
 
@@ -477,17 +547,19 @@ class aEdge {
 
 class answerPanel extends JPanel{
 	private mainPanel mainP;
-	private JTextArea showTxt = new JTextArea(10,0);
+	private JTextArea showTxt = new JTextArea(10,20);
 	
 	public answerPanel(mainPanel mainP) {
 		this.mainP = mainP;
 		setBackground(Color.red);
 		setLayout(new BorderLayout());
 		
+		
 		JPanel southMenu = new JPanel(new GridLayout(2, 1));
 		
 		JButton showBtn = new JButton("Show Path");
 		JButton stcBtn = new JButton("Show Structure");
+		
 		southMenu.add(showBtn, BorderLayout.NORTH);
 		southMenu.add(stcBtn, BorderLayout.NORTH);
 		add(southMenu, BorderLayout.NORTH);
@@ -498,6 +570,8 @@ class answerPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				setEdgeStat();
+				
 				update();
 				
 				Graph g = new Graph();
@@ -509,13 +583,12 @@ class answerPanel extends JPanel{
 					g.addEdge(mainP.rEdge.get(i));
 				}
 				
-//				System.out.println(g.toString());
 				DijkstraAlgorithm algor = new DijkstraAlgorithm(g, mainP.rNode.get(mainP.startEndSelect[0]));
 				algor.run();
-//				System.out.println(algor.getFullPath(mainP.rNode.get(4), mainP.rEdge));
 				setPathText("Path (" + (char)(mainP.startEndSelect[0]+65) + ", " + (char)(mainP.startEndSelect[1]+65) + ")\n" +
 						algor.getFullPath(mainP.rNode.get(mainP.startEndSelect[1]), mainP.rEdge));
 				algor.setLineColor(mainP.rNode.get(mainP.startEndSelect[1]), mainP.rEdge, mainP.NP.getSelectedLine());
+
 				mainP.NP.repaint();
 			}
 		});
@@ -524,6 +597,8 @@ class answerPanel extends JPanel{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				setEdgeStat();
+				
 				update();
 				
 				Graph g = new Graph();
@@ -535,7 +610,6 @@ class answerPanel extends JPanel{
 					g.addEdge(mainP.rEdge.get(i));
 				}
 				
-//				System.out.println(g.toString());
 				setPathText(g.toString());
 				DijkstraAlgorithm algor = new DijkstraAlgorithm(g, mainP.rNode.get(0));
 				algor.run();
@@ -553,6 +627,10 @@ class answerPanel extends JPanel{
 	
 	private void setPathText(String str) {
 		showTxt.setText(str);
+	}
+	
+	private void setEdgeStat() {
+		this.mainP.setChk();
 	}
 	
 }

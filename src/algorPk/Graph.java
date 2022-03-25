@@ -36,7 +36,7 @@ public class Graph {
 	
 	@Override
 	public String toString() {
-		String str = "Adjecency list\n\n";
+		String str = "";
 		for(int i=0;i<=getNodes().size()-1;i++) {
 			str += getNodes().get(i);
 			for(int j = 0;j <= getEdges().size()-1;j++) {
