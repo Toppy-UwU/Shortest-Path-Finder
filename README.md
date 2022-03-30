@@ -9,5 +9,5 @@ start windows
 add node and edge
 ![My Image](img/addNode.png)
 
-show shotest path
+show shortest path
 ![My Image](img/showPath.png)
