@@ -450,18 +450,26 @@ class mainPanel extends JPanel{
 		
 	}
 	
+	public void showPathActive() {
+		this.NP.setPathActive();
+		this.NP.repaint();
+	}
 	
+	public boolean getPathActive() {
+		return this.NP.getPathActive();
+	}
 }
 
 
 
 class nodePanel extends JPanel {
-	private ArrayList<aEdge> EP = new ArrayList<aEdge>();
+	private ArrayList<aEdge> EP = new ArrayList<aEdge>(); //Edge Position
 	private ArrayList<Line2D.Double> line = new ArrayList<Line2D.Double>();
 	private ArrayList<Boolean> selectedLine = new ArrayList<Boolean>();
 	private int n = 0;
 	private boolean fr = false;
 	private boolean edgeStat;
+	private boolean pathActive = false;
 	
 	public nodePanel() {
 		setBackground(new Color(175,175,175));
@@ -480,7 +488,7 @@ class nodePanel extends JPanel {
 		for(int i=0;i<EP.size();i++) {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setStroke(new BasicStroke(2f));
-	        if(this.selectedLine.get(i)) {
+	        if(this.selectedLine.get(i) && this.pathActive) {
 	        	g2.setColor(Color.red);
 	        }else {
 	        	g2.setColor(Color.black);
@@ -507,8 +515,8 @@ class nodePanel extends JPanel {
 		return this.selectedLine;
 	}
 	
-	public void setSelectedLine() {
-		
+	public void setPathActive() {
+		this.pathActive = !this.pathActive;
 	}
 	
 	public void setZeroNodePanel() {
@@ -517,6 +525,10 @@ class nodePanel extends JPanel {
 		this.selectedLine.clear();
 		this.n = 0;
 		this.fr = false;
+	}
+	
+	public boolean getPathActive() {
+		return this.pathActive;
 	}
 	
 }
@@ -555,14 +567,16 @@ class answerPanel extends JPanel{
 		setLayout(new BorderLayout());
 		
 		
-		JPanel southMenu = new JPanel(new GridLayout(2, 1));
+		JPanel sideMenu = new JPanel(new GridLayout(3, 1));
 		
 		JButton showBtn = new JButton("Show Path");
 		JButton stcBtn = new JButton("Show Structure");
+		JButton detBtn = new JButton("Show Path Color");
 		
-		southMenu.add(showBtn, BorderLayout.NORTH);
-		southMenu.add(stcBtn, BorderLayout.NORTH);
-		add(southMenu, BorderLayout.NORTH);
+		sideMenu.add(showBtn, BorderLayout.NORTH);
+		sideMenu.add(stcBtn, BorderLayout.NORTH);
+		sideMenu.add(detBtn, BorderLayout.NORTH);
+		add(sideMenu, BorderLayout.NORTH);
 		add(showTxt, BorderLayout.CENTER);
 		
 		showBtn.addActionListener(new ActionListener() {
@@ -571,7 +585,9 @@ class answerPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				
 				setEdgeStat();
-				
+				if(!getPathActive()) {
+					showPathActive();
+				}
 				update();
 				
 				Graph g = new Graph();
@@ -599,6 +615,7 @@ class answerPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				setEdgeStat();
 				
+				
 				update();
 				
 				Graph g = new Graph();
@@ -618,6 +635,13 @@ class answerPanel extends JPanel{
 			}
 		});
 		
+		detBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showPathActive();
+			}
+		});
 		
 	}
 	
@@ -631,6 +655,14 @@ class answerPanel extends JPanel{
 	
 	private void setEdgeStat() {
 		this.mainP.setChk();
+	}
+	
+	private void showPathActive() {
+		this.mainP.showPathActive();
+	}
+	
+	private boolean getPathActive() {
+		return mainP.getPathActive();
 	}
 	
 }
